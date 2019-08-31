@@ -24,6 +24,8 @@ namespace GZipTest
 
             Console.WriteLine(args[0], args[1], args[2]);
 
+            
+
             return 0;
         }
     }
