@@ -11,8 +11,8 @@ namespace GZipTest
 
     public static class GZipParallel
     {
-
         private static string directoryPath = @".\temp";
+
         static GZipParallel()
         {
         }

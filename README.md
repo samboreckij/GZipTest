@@ -1,2 +1,7 @@
 # GZipTest
 Application for Veeam Software
+# About
+Консольное приложение на C# для поблочного сжатия и распаковки файлов с помощью System.IO.Compression.GzipStream.
+#How To Use
+Параметры программы, имена исходного и результирующего файлов должны задаваться в командной строке следующим образом:
+GZipTest.exe compress/decompress [имя исходного файла] [имя результирующего файла]
