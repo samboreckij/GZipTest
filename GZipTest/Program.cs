@@ -16,6 +16,7 @@ namespace GZipTest
 
         static int Main(string[] args)
         {
+            // Input args: compress/decompress [inputFileName] [outputFileName]
             if (args.Length == 0)
             {
                 Help();
