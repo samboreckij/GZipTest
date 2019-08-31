@@ -11,6 +11,7 @@ namespace GZipTest
         static void Help()
         {
             Console.WriteLine("How to use this program?");
+            // TODO: print types and values of arguments
         }
 
         static int Main(string[] args)
@@ -20,6 +21,8 @@ namespace GZipTest
                 Help();
                 return 1;
             }
+
+            Console.WriteLine(args[0], args[1], args[2]);
 
             return 0;
         }
