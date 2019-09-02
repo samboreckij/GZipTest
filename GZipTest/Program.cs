@@ -39,19 +39,25 @@ namespace GZipTest
                 Help();
                 return 1;
             }
-
-            FileInfo inputFile = new FileInfo(args[1]);
-            FileInfo outputFile = new FileInfo(args[2]);
-
-            if (args[0] == "compress")
+            try
             {
-                GZipParallel.Compress(inputFile, outputFile);
-            }
-            if (args[0] == "decompress")
-            {
-                GZipParallel.Decompress(inputFile, outputFile);
-            }
 
+                FileInfo inputFile = new FileInfo(args[1]);
+                FileInfo outputFile = new FileInfo(args[2]);
+
+                if (args[0] == "compress")
+                {
+                    GZipParallel.Compress(inputFile, outputFile);
+                }
+                if (args[0] == "decompress")
+                {
+                    GZipParallel.Decompress(inputFile, outputFile);
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
             return 0;
         }
     }
