@@ -48,10 +48,13 @@ namespace GZipTest
                 if (args[0] == "compress")
                 {
                     GZipParallel.Compress(inputFile, outputFile);
+                    // TODO: one method (ResultInfo)
+                    Console.WriteLine($"Compressed {inputFile.Name} from {inputFile.Length.ToString()} to {outputFile.Length.ToString()} bytes.");
                 }
                 if (args[0] == "decompress")
                 {
                     GZipParallel.Decompress(inputFile, outputFile);
+                    Console.WriteLine($"Decompressed {inputFile.Name} from {inputFile.Length.ToString()} to {outputFile.Length.ToString()} bytes.");
                 }
             }
             catch (Exception ex)

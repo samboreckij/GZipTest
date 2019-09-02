@@ -30,7 +30,7 @@ namespace GZipTest
                 {
                     compressStream.Write(dataArray, 0, dataArray.Length);
                 }
-                return output.ToArray();
+                //return output.ToArray();
             }
         }
 
@@ -56,55 +56,18 @@ namespace GZipTest
         {
             try
             {
-                //FileStream inStream = new FileStream(input.FullName, FileMode.Open);
-                //FileStream outStream = new FileStream(output.FullName, FileMode.Append);
-                //FileStream inFile = new FileStream(inFileName, FileMode.Open);
-                //FileStream outFile = new FileStream(inFileName + ".gz", FileMode.Append);
-
-                //int _dataPortionSize;
-                //Thread[] tPool;
-
-                //Console.Write("Compressing...");
-
-                //while (inFile.Position < inFile.Length)
+                // TODO: Algorithm must be implemented.
+                //while (CanRead or QueueIsNotEmpty)
                 //{
-                //    Console.Write(".");
-                //    tPool = new Thread[threadNumber];
-                //    for (int portionCount = 0;
-                //         (portionCount < threadNumber) && (inFile.Position < inFile.Length);
-                //         portionCount++)
-                //    {
-                //        if (inFile.Length - inFile.Position <= dataPortionSize)
-                //        {
-                //            _dataPortionSize = (int)(inFile.Length - inFile.Position);
-                //        }
-                //        else
-                //        {
-                //            _dataPortionSize = dataPortionSize;
-                //        }
-                //        dataArray[portionCount] = new byte[_dataPortionSize];
-                //        inFile.Read(dataArray[portionCount], 0, _dataPortionSize);
-
-                //        tPool[portionCount] = new Thread(CompressBlock);
-                //        tPool[portionCount].Start(portionCount);
-                //    }
-
-                //    for (int portionCount = 0; (portionCount < threadNumber) && (tPool[portionCount] != null);)
-                //    {
-                //        if (tPool[portionCount].ThreadState == ThreadState.Stopped)
-                //        {
-                //            BitConverter.GetBytes(compressedDataArray[portionCount].Length + 1)
-                //                        .CopyTo(compressedDataArray[portionCount], 4);
-                //            outFile.Write(compressedDataArray[portionCount], 0, compressedDataArray[portionCount].Length);
-                //            portionCount++;
-                //        }
-                //    }
-
+                //  if (CanRead and usingThreadsCount < MaxThreadsCount) {
+                //      ReadForCompress
+                //      Enqueue
+                //  }
+                //  if (Thread on Queue's Peek == stopped) {
+                //      SaveResult
+                //      Dequeue
+                //  }
                 //}
-
-                //outFile.Close();
-                //inFile.Close();
-                // TODO: Algorithm must be completed.
 
                 using (FileStream inStream = input.OpenRead())
                 {
@@ -112,15 +75,16 @@ namespace GZipTest
                     {
                         using (FileStream outStream = File.Create(output.FullName))
                         {
-                            int tail, usingThreadsCount = 0;
+                            int tail;
 
                             Console.Write("Let's begin...");
-                            while (inStream.Position < inStream.Length)
+                            while (inStream.Position < inStream.Length || writerQueue.Count > 0)
                             {
                                 Thread compressThread;
-                                Console.Write(".");
-                                if (usingThreadsCount < threadCount)
+
+                                if (inStream.Position < inStream.Length && writerQueue.Count < 8)
                                 {
+                                    Console.Write(".");
                                     if (inStream.Length - inStream.Position <= blockSize)
                                     {
                                         tail = (int)(inStream.Length - inStream.Position);
@@ -134,55 +98,37 @@ namespace GZipTest
                                     compressThread = new Thread(CompressBlock);
                                     writerQueue.Enqueue(compressThread);
                                     compressThread.Start(dataArray);
-                                    usingThreadsCount++;
                                 }
-                                if (writerQueue.TryPeek(out compressThread))
+                                if (writerQueue.TryPeek(out compressThread) && compressThread.ThreadState == ThreadState.Stopped)
                                 {
-                                    if (compressThread.ThreadState == ThreadState.Stopped)
-                                    {
-                                        compressThread
-                                        BitConverter.GetBytes(compressedDataArray[portionCount].Length + 1).CopyTo(compressedDataArray[portionCount], 4);
-                                        outFile.Write(compressedDataArray[portionCount], 0, compressedDataArray[portionCount].Length);
-                                    }
+
                                 }
+                                //
+                                //
+                                //if (usingThreadsCount < threadCount)
+                                //{
+                                //    
+                                //    
+                                //    usingThreadsCount++;
+                                //}
+                                //if (writerQueue.TryPeek(out compressThread))
+                                //{
+                                //    if (compressThread.ThreadState == ThreadState.Stopped)
+                                //    {
+                                //        compressThread
+                                //        BitConverter.GetBytes(compressedDataArray[portionCount].Length + 1).CopyTo(compressedDataArray[portionCount], 4);
+                                //        outFile.Write(compressedDataArray[portionCount], 0, compressedDataArray[portionCount].Length);
+                                //    }
+                                //}
                             }
                         }
                     }
                 }
-
-
-                //FileInfo info = new FileInfo(directoryPath + Path.DirectorySeparatorChar + fileToCompress.Name + ".gz");
-                // TODO: Move console output to Main method.
-                //Console.WriteLine($"Compressed {input.Name} from {input.Length.ToString()} to {output.Length.ToString()} bytes.");
             }
             catch (Exception e)
             {
                 Console.WriteLine("Error: " + e.Message);
             }
-
-
-            //foreach (FileInfo fileToCompress in directorySelected.GetFiles())
-            //{
-            //    using (FileStream originalFileStream = fileToCompress.OpenRead())
-            //    {
-            //        if ((File.GetAttributes(fileToCompress.FullName) &
-            //           FileAttributes.Hidden) != FileAttributes.Hidden & fileToCompress.Extension != ".gz")
-            //        {
-            //            using (FileStream compressedFileStream = File.Create(fileToCompress.FullName + ".gz"))
-            //            {
-            //                using (GZipStream compressionStream = new GZipStream(compressedFileStream,
-            //                   CompressionMode.Compress))
-            //                {
-            //                    originalFileStream.CopyTo(compressionStream);
-
-            //                }
-            //            }
-            //            FileInfo info = new FileInfo(directoryPath + Path.DirectorySeparatorChar + fileToCompress.Name + ".gz");
-            //            Console.WriteLine($"Compressed {fileToCompress.Name} from {fileToCompress.Length.ToString()} to {info.Length.ToString()} bytes.");
-            //        }
-
-            //    }
-            //}
         }
 
         /// <summary>
